@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Str;
+use Illuminate\Database\DBAL\TimestampType;
 
 return [
 
@@ -16,6 +17,23 @@ return [
     */
 
     'default' => env('DB_CONNECTION', 'mysql'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Configuration For Updating Timestamps
+    |--------------------------------------------------------------------------
+    |
+    | The Doctrine DBAL library is used to determine the current state of the 
+    | column and to create the SQL queries needed to make the requested changes to your column
+    | 
+    |
+    */
+
+    'dbal' => [
+        'types' => [
+            'timestamp' => TimestampType::class,
+        ],
+    ],
 
     /*
     |--------------------------------------------------------------------------
