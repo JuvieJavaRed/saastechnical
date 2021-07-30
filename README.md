@@ -27,4 +27,8 @@ The application can now be tested unsing the available endpoints.
 -All other requests can be run used without the token.
 
 
+X: No tests
+X: No Docker
+
+
 
