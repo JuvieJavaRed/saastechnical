@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use Validator;
 
@@ -25,6 +26,7 @@ class UsersController extends Controller
             'confirm_password'=>'required|same:password'
         ]);
         if($validation->fails()){
+            Log::channel('controllers')->error('Failed to create user because of missing parameters');
             return response()->json($validation->errors(),202);
         }
 

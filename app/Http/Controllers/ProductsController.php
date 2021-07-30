@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Models\Product;
 use Validator;
 
@@ -18,6 +19,7 @@ class ProductsController extends Controller
     {
         //retrieve all products
         $products = DB::table('products')->get();
+        Log::channel('controllers')->info("All products successfully retrieved");
         return response()->json($products, 200);
     }
 
@@ -48,6 +50,7 @@ class ProductsController extends Controller
             'quantity'=>'required'
         ]);
         if($validation->fails()){
+            Log::channel('controllers')->error('Request for product creation not granted because of malformed request missing parameters');
             return response()->json($validation->errors(),400);
         }
         //create a new product.
@@ -58,6 +61,7 @@ class ProductsController extends Controller
             'quantity' => $request->quantity,
             'price' => $request->price,
         ]);
+        Log::channel('controllers')->info('Record successfully created for product');
         return response()->json(['success'=>'Record Successfully Created'], 201);
     }
 
@@ -71,6 +75,7 @@ class ProductsController extends Controller
     {
         //verify that the id is not empty or null...
         if(empty($id)){
+            Log::channel('controllers')->error('Can not fetch data because ID is missing or null');
             return response()->json(['error'=>'Invalid ID has been passed'], 400);
         }
         $products = DB::table('products')->where('id',$id)->first();
@@ -106,6 +111,7 @@ class ProductsController extends Controller
             'quantity'=>'required'
         ]);
         if($validation->fails()){
+            Log::channel('controllers')->error('Request for product update not granted because of malformed request missing parameters');
             return response()->json($validation->errors(),400);
         }
 
@@ -117,7 +123,7 @@ class ProductsController extends Controller
             'quantity' => $request->quantity,
             'price' => $request->price
         ]);
-
+        Log::channel('controllers')->info('Record with ID has been successfully updated');
         return response()->json(['success'=>'Record Successfully Updated'], 200);
     }
 
@@ -131,6 +137,7 @@ class ProductsController extends Controller
     {
         //verify that the id is not empty or null...
         if(empty($id)){
+            Log::channel('controllers')->error('Delete request failed to be excuted because of null or empty ID');
             return response()->json(['error'=>'Invalid ID has been passed'], 400);
         }
 
