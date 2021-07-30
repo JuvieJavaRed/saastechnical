@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Models\Product;
+use Validator;
 
 class ProductsController extends Controller
 {
@@ -13,7 +16,9 @@ class ProductsController extends Controller
      */
     public function index()
     {
-        //
+        //retrieve all products
+        $products = DB::table('products')->get();
+        return response()->json($products, 200);
     }
 
     /**
@@ -34,7 +39,26 @@ class ProductsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //validate request
+        $validation = Validator::make($request->all(),[
+            'name'=>'required',
+            'category'=>'required',
+            'sku'=>'required',
+            'price'=>'required',
+            'quantity'=>'required'
+        ]);
+        if($validation->fails()){
+            return response()->json($validation->errors(),400);
+        }
+        //create a new product.
+        DB::table('products')->insert([
+            'name' => $request->name,
+            'category' => $request->category,
+            'sku' => $request->sku,
+            'quantity' => $request->quantity,
+            'price' => $request->price,
+        ]);
+        return response()->json(['success'=>'Record Successfully Created'], 201);
     }
 
     /**
@@ -45,7 +69,12 @@ class ProductsController extends Controller
      */
     public function show($id)
     {
-        //
+        //verify that the id is not empty or null...
+        if(empty($id)){
+            return response()->json(['error'=>'Invalid ID has been passed'], 400);
+        }
+        $products = DB::table('products')->where('id',$id)->first();
+        return response()->json($products, 200);
     }
 
     /**
@@ -66,9 +95,30 @@ class ProductsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        //validate request
+        $validation = Validator::make($request->all(),[
+            'name'=>'required',
+            'category'=>'required',
+            'sku'=>'required',
+            'price'=>'required',
+            'quantity'=>'required'
+        ]);
+        if($validation->fails()){
+            return response()->json($validation->errors(),400);
+        }
+
+        //update a specific record
+        DB::table('products')->where('id', $request->id)->update([
+            'name' => $request->name,
+            'category' => $request->category,
+            'sku' => $request->sku,
+            'quantity' => $request->quantity,
+            'price' => $request->price
+        ]);
+
+        return response()->json(['success'=>'Record Successfully Updated'], 200);
     }
 
     /**
@@ -79,6 +129,12 @@ class ProductsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        //verify that the id is not empty or null...
+        if(empty($id)){
+            return response()->json(['error'=>'Invalid ID has been passed'], 400);
+        }
+
+        DB::table('products')->where('id', $id)->delete();
+        return response()->json(['success'=>'Record Successfully Deleted'], 200);
     }
 }

@@ -42,9 +42,9 @@ return [
         ],
 
         'api' => [
-            'driver' => 'token',
+            'driver' => 'passport', //changed driver name to use passport library
             'provider' => 'users',
-            'hash' => false,
+            //'hash' => false,
         ],
     ],
 
